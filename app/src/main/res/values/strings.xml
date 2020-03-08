@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">BloodBanker</string>
+    <string name="my_awesome_shop">My Awesome Shop</string>
+    <string name="shop_text">All In one stop Shop</string>
+    <string name="live_status">Live Shop Status</string>
+    <string name="see_data_from_sensors">See Data from sensors</string>
+    <string name="manager_attendants_coner">Manager/ Attendants</string>
+    <string name="shop_records">Enter and View Shop Records</string>
+    <string name="view_records_for_restockig">Enter product records and view records for restockig</string>
+    <string name="product_restocking">Product Restocking</string>
+    <string name="view_records_analysis">View records Analysis</string>
+    <string name="info_analysis">Info Analysis</string>
+    <string name="settings">Settins</string>
+    <string name="station">Station</string>
+    <string name="date">Date</string>
+    <string name="weight">Weight</string>
+    <string name="clients">Clients</string>
+    <string name="your_details">Welcome to the community, please fill your details</string>
+    <string name="name">Enter Name</string>
+    <string name="county_hq">Enter your County HQ</string>
+    <string name="enter_mobile_number">Enter Mobile Number</string>
+    <string name="experience">Enter yrs of Experience</string>
+    <string name="password">Enter Password</string>
+    <string name="community">Join Community</string>
+    <string name="sign_up"><u>Sign Up</u></string>
+
+</resources>
