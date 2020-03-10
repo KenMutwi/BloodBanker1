@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.android.volley.Request.*;
+import static com.example.bloodbanker.Utils.Endpoints.login_url;
 import static com.example.bloodbanker.Utils.Endpoints.register_url;
 
 public class RegisterActivity extends AppCompatActivity {

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".Activities.LoginActivity">
 
     <LinearLayout
@@ -14,7 +15,7 @@
         <ImageView
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/button_bg"
+            android:background="@android:color/holo_green_dark"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="200dp"/>
@@ -56,7 +57,7 @@
             android:id="@+id/Login"
             android:text="Login"
             android:textSize="18sp"
-            android:background="@drawable/button_bg"
+            android:background="@android:color/holo_red_light"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -73,6 +74,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal" />
         <TextView
+            android:id="@+id/signup"
             android:text="@string/sign_up"
             android:textColor="@android:color/black"
             android:layout_margin="30dp"
