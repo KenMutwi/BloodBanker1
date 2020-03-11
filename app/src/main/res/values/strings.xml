@@ -23,5 +23,6 @@
     <string name="password">Enter Password</string>
     <string name="community">Join Community</string>
     <string name="sign_up"><u>Sign Up</u></string>
+    <string name="choose_best_photo"><u> Choose Best Photo</u></string>
 
 </resources>
