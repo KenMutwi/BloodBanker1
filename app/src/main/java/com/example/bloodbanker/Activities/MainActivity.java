@@ -9,9 +9,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.bloodbanker.Adapters.RequestAdapter;
 import com.example.bloodbanker.DataModels.RequestDataModel;
+import com.example.bloodbanker.MakeRequestActivity;
 import com.example.bloodbanker.R;
 
 import java.util.ArrayList;
@@ -26,6 +29,14 @@ import java.util.List;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TextView make_request=findViewById(R.id.make_req);
+        make_request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MakeRequestActivity.class));
+            }
+        });
         requestDataModelList = new ArrayList<>();
         Toolbar toolbar= findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
