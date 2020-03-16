@@ -1,6 +1,7 @@
 package com.example.bloodbanker.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     Toast.makeText(LoginActivity.this, response , Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("number",number).apply();
                     LoginActivity.this.finish();
                 }else{
                     Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
