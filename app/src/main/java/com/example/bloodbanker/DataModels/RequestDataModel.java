@@ -1,12 +1,29 @@
 package com.example.bloodbanker.DataModels;
 
-public class RequestDataModel {
-   private String message;
-    private String imageUrl;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public RequestDataModel(String message, String imageUrl) {
-        this.message = message;
-        this.imageUrl = imageUrl;
+public class RequestDataModel {
+
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("message")
+    @Expose
+    private String message;
+    @SerializedName("uri")
+    @Expose
+    private String uri;
+    @SerializedName("number")
+    @Expose
+    private String number;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getMessage() {
@@ -17,11 +34,20 @@ public class RequestDataModel {
         this.message = message;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getUri() {
+        return uri;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
 }

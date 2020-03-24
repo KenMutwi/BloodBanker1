@@ -2,23 +2,39 @@
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.bloodbanker.Adapters.RequestAdapter;
 import com.example.bloodbanker.DataModels.RequestDataModel;
-import com.example.bloodbanker.MakeRequestActivity;
 import com.example.bloodbanker.R;
+import com.example.bloodbanker.Utils.VolleySingleton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.example.bloodbanker.Utils.Endpoints.get_request_url;
+import static com.example.bloodbanker.Utils.Endpoints.login_url;
 
             public class MainActivity extends AppCompatActivity {
                 private RecyclerView recyclerView;
@@ -61,13 +77,36 @@ import java.util.List;
         populateHomePage();
     }
     private void populateHomePage(){
-        RequestDataModel requestDataModel= new RequestDataModel("I love you sweet Purity Gakii Gikunda","https://www.pexels.com/photo/affection-afterglow-backlit-blur-556667/");
-        requestDataModelList.add(requestDataModel);
-        requestDataModelList.add(requestDataModel);
-        requestDataModelList.add(requestDataModel);
-        requestDataModelList.add(requestDataModel);
-        requestDataModelList.add(requestDataModel);
-        requestAdapter.notifyDataSetChanged();
+
+        StringRequest stringRequest= new StringRequest(Request.Method.POST, get_request_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Gson gson= new Gson();
+                Type type= new TypeToken<List<RequestDataModel>>(){}.getType();
+                List<RequestDataModel> dataModels=gson.fromJson(response,type);
+                requestDataModelList.addAll(dataModels);
+                requestAdapter.notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(MainActivity.this, "Something is Wrong :(", Toast.LENGTH_SHORT).show();
+
+                Log.d("VOLLEY",error.getMessage());
+
+            }
+        }){
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                return params;
+            }
+        };
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
 
     }
 

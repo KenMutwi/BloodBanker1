@@ -1,13 +1,16 @@
-package com.example.bloodbanker;
+package com.example.bloodbanker.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.PermissionChecker;
 import androidx.preference.PreferenceManager;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,9 +20,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,17 +33,26 @@ import android.widget.Toast;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.androidnetworking.interfaces.UploadProgressListener;
-import com.bumptech.glide.Glide;
+import com.example.bloodbanker.R;
 import com.example.bloodbanker.Utils.Endpoints;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
@@ -45,7 +60,10 @@ public class MakeRequestActivity extends AppCompatActivity {
     EditText messageText;
     TextView ImageText;
     ImageView imageView;
-    Button postBtn;
+    ImageButton ibPick;
+    private CircleImageView civProfile;
+
+    Button postBtn,btnConfirm;
    Uri imageUri;
 
 
@@ -56,11 +74,13 @@ public class MakeRequestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_request);
-        AndroidNetworking.initialize(getApplicationContext());
+
         messageText = findViewById(R.id.heartfelt);
         ImageText=findViewById(R.id.choosetext);
-        imageView=findViewById(R.id.myimage);
+        civProfile=findViewById(R.id.profile_image);
+        btnConfirm=findViewById(R.id.btn_Confirm);
         postBtn=findViewById(R.id.post_btn);
+        ibPick=findViewById(R.id.btn_Pick);
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +100,50 @@ public class MakeRequestActivity extends AppCompatActivity {
 
             }
         });
+        ibPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dexter.withActivity(MakeRequestActivity.this)
+                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse response) {
+                                CropImage.activity()
+                                        .setGuidelines(CropImageView.Guidelines.ON)
+                                        .start(MakeRequestActivity.this);
+                            }
+
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse response) {
+                                if (response.isPermanentlyDenied()){
+                                    AlertDialog.Builder builder=new AlertDialog.Builder(MakeRequestActivity.this);
+                                    builder.setTitle("Permissions Required")
+                                            .setMessage("Permission to access your Device storage required")
+                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent intent=new Intent();
+                                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                                    intent.setData(Uri.fromParts("package",getPackageName(),null));
+                                                    startActivityForResult(intent,51);
+
+
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel",null)
+                                            .show();
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        })
+                        .check();
+            }
+        });
+
 
     }
     private void pickImage(){
@@ -167,20 +231,55 @@ public class MakeRequestActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==101 && requestCode==RESULT_OK && data!=null && data.getData() !=null){
-            if(data.getData()!=null){
-             imageUri= data.getData();
-             try{
-                 bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                 imageView.setImageBitmap(bitmap);
-             }catch (IOException e){
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                final Uri resultUri = result.getUri();
+                civProfile.setImageURI(resultUri);
+                btnConfirm.setVisibility(View.VISIBLE);
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String number= PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                                .getString("number","12345");
 
-             }
-           //  Glide.with(getApplicationContext()).load(imageUri).into(imageView);
-           }else{
-             showmessage("Something went wrong");
-          }
+                        String message =messageText.getText().toString();
+                        File imageFile=new File(resultUri.getPath());
+                        AndroidNetworking.upload(Endpoints.upload_url)
+                                .addMultipartFile("file",imageFile)
+                                .addMultipartParameter("message",message)
+                                .addMultipartParameter("number", number)
+                                .setPriority(Priority.HIGH)
+                                .build()
+                                .setUploadProgressListener(new UploadProgressListener() {
+                                    @Override
+                                    public void onProgress(long bytesUploaded, long totalBytes) {
+                                        long progress=(bytesUploaded/totalBytes)*100;
+                                        ImageText.setText(String.valueOf(progress));
+                                        ImageText.setOnClickListener(null);
 
+                                    }
+                                })
+                                .getAsString(new StringRequestListener() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        showmessage(response);
+
+                                    }
+
+                                    @Override
+                                    public void onError(ANError anError) {
+                                       showmessage(anError.getMessage());
+
+                                    }
+                                });
+
+                    }
+                });
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
     }
     private void showFileChooser(){
