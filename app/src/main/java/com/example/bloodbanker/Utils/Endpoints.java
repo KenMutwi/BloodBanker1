@@ -8,5 +8,6 @@ public class Endpoints {
     public static final String login_url = base_url+"login.php";
     public static final String upload_url = base_url+"upload_request.php";
     public static final String get_request_url = base_url+"get_requests.php";
+    public static final String search_results_url = base_url+"search_donors.php";
 
 }

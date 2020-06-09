@@ -65,11 +65,13 @@ public class LoginActivity extends AppCompatActivity {
         StringRequest stringRequest= new StringRequest(Request.Method.POST, login_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(response.equals("Success")) {
+                if(!response.equals("invalid Credentials")) {
 
                     Toast.makeText(LoginActivity.this, response , Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("number",number).apply();
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("county",response).apply();
+
                     LoginActivity.this.finish();
                 }else{
                     Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();

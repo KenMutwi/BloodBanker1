@@ -75,8 +75,14 @@ import static com.example.bloodbanker.Utils.Endpoints.login_url;
         requestAdapter = new RequestAdapter(requestDataModelList,this);
         recyclerView.setAdapter(requestAdapter);
         populateHomePage();
+        TextView pick_location = findViewById(R.id.choose_loc);
+        String location =  PreferenceManager.getDefaultSharedPreferences(this).getString("city","no_city_found");
+        if(!location.equals("no_city_found")){
+            pick_location.setText(location);
+        }
     }
     private void populateHomePage(){
+       final String county= PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("city","no_city");
 
         StringRequest stringRequest= new StringRequest(Request.Method.POST, get_request_url, new Response.Listener<String>() {
             @Override
@@ -101,6 +107,7 @@ import static com.example.bloodbanker.Utils.Endpoints.login_url;
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                params.put("county",county);
 
                 return params;
             }

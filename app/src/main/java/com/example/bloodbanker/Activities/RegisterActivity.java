@@ -1,6 +1,7 @@
 package com.example.bloodbanker.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 if(response.equals("Success")) {
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("county",county1).apply();
 
                     Toast.makeText(RegisterActivity.this, response , Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegisterActivity.this,MainActivity.class));
@@ -104,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
 
     }
-    private boolean isValid(String name, String county, String experience, String password, String mobile){
+    public boolean isValid(String name, String county, String experience, String password, String mobile){
         List<String> valid_experience = new ArrayList<>();
         valid_experience.add("1");
         valid_experience.add("2");
